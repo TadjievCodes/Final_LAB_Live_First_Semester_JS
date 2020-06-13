@@ -1,0 +1,323 @@
+<!--
+Name: Tadjiev Mukhammadkhon
+Date: 23/04/2020
+Purpose: Final Test Lab Coding
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Final Test Part B</title>
+</head>
+<style>
+    h1 {
+        text-align: left;
+    }
+    
+    body {
+        font-family: Verdana;
+        font-size: 100%;
+        background-color: #d8e7ff;
+    }
+    
+    input[type=number] {
+        width: 40px;
+    }
+    
+    .selection {
+        font-family: Verdana;
+        font-size: 11pt;
+        border: 1px solid #07A2FE;
+        color: black;
+        background-color: aliceblue;
+        height: 25px;
+        text-align: left;
+    }
+    
+    .button {
+        font-family: Verdana;
+        background-color: aliceblue;
+        font-size: 12pt;
+        padding: 5px;
+    }
+    
+    fieldset {
+        padding: 20px;
+    }
+    
+    legend {
+        border: 1px solid black;
+        color: black;
+        font-size: 90%;
+        text-align: left;
+    }
+    
+    .outputStyle {
+        color: #523620;
+        text-align: center;
+        margin: 20px 10px;
+        width: 550px;
+        height: auto
+    }
+</style>
+
+<body onload="init()">
+    <h1>Customer Data</h1>
+
+    <!-- Registration Form -->
+    <form>
+        <fieldset>
+            <legend>New Customer Form</legend>
+            First name:
+            <input type="text" id="tbFirstName">
+            <br><br> Last name:
+            <input type="text" id="tbLastName">
+            <br><br> City:
+            <input type="text" id="tbCity"> Province:
+            <select id="ddProvince" class="selection">
+					<option>ON</option>
+					<option>BC</option>
+					<option>AB</option>
+					<option>SK</option>
+					<option>MB</option>				
+					<option>QC</option>
+					<option>NB</option>
+					<option>NS</option>
+					<option>PE</option>
+					<option>NL</option>
+					<option>YT</option>
+					<option>NT</option>
+					<option>NU</option>
+				</select>
+            <br><br> Birth Date:
+            <input type="text" id="tbBirthDate" placeholder="Month Day, Year" /> Gender:
+            <select id="ddGender" class="selection">
+					<option>Male</option>
+					<option>Female</option>
+				</select>
+            <br/><br/>
+            <input type="button" id="btnSubmit" value="Submit" class="button">
+        </fieldset>
+    </form>
+    <br><br>
+
+    <!-- Customer List -->
+    <div>
+        <fieldset>
+            <legend>Customers</legend>
+            <div id="divCustomerOutput" class="outputStyle">
+                [Customer List Here]
+            </div>
+        </fieldset>
+    </div>
+    <br><br>
+
+    <!-- Query Form -->
+    <div>
+        <fieldset>
+            <legend>Query</legend>
+            Gender:
+            <select id="ddQueryGender" class="selection">
+					<option>Male</option>
+					<option>Female</option>
+				</select> Province:
+            <select id="ddQueryProvince" class="selection">
+					<option>ON</option>
+					<option>BC</option>
+					<option>AB</option>
+					<option>SK</option>
+					<option>MB</option>				
+					<option>QC</option>
+					<option>NB</option>
+					<option>NS</option>
+					<option>PE</option>
+					<option>NL</option>
+					<option>YT</option>
+					<option>NT</option>
+					<option>NU</option>
+				</select> Age:
+            <input type="number" id="tbQueryAge" value=18 /> &nbsp;
+            <input type="button" id="btnQuery" value="Query" class="button" />
+            <hr>
+            <div id="divQueryOutput" class="outputStyle">[Query Output Here]</div>
+        </fieldset>
+    </div>
+
+    <!-- Javascript -->
+    <script>
+        // empty global array to store data of the customers
+        let customers = [];
+
+        // Function constructor for creating Objects
+        function customer(firstName, lastName, city, province, birthDate, gender) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.city = city;
+            this.province = province;
+            this.birthDate = birthDate;
+            this.gender = gender;
+            /*
+            this.getAge = function() {
+                var differenceInMilliseconds = (this.birthDate.getTime() - Date.now()) / (24 * 3600000);
+                console.log(differenceInMilliseconds);
+			}
+			*/
+            /*
+
+            this.getAge = function() { // birthday is a date
+                    var ageDifMs = Date.now() - birthDate.getTime();
+                    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+                    return Math.abs(ageDate.getUTCFullYear() - 1970);
+
+				}
+				*/
+
+            //new Date("June 10, 1979").getFullYear() - this.birthdate.getFullYear()
+
+
+            this.toString = function() { // add born part maybe 
+                return `${this.firstName} ${this.lastName} is a ${new Date().getFullYear() - this.birthDate.getFullYear()} year old 
+				        ${this.gender} from ${this.city}, ${this.province}`;
+            }
+
+        }
+
+
+        function initializeCustomers() {
+            customers.push(new customer("Jeff", "Smith", "London", "ON", new Date("March 13, 2003"), "Male"));
+            customers.push(new customer("Pauline", "Maclntyre", "Sydney", "NS", new Date("October 20, 1995"), "Female"));
+            customers.push(new customer("Kevin", "Firth", "London", "ON", new Date("September 19, 1979"), "Male"));
+            customers.push(new customer("Carol", "Green", "London", "ON", new Date("July 14, 1997"), "Female"));
+            customers.push(new customer("Lynda", "Reynolds", "Winnipeg", "MB", new Date("June 17, 1983"), "Female"));
+        }
+
+        function init() {
+            initializeCustomers();
+            displayCustomers();
+            queryData();
+        }
+
+        function displayCustomers() {
+            let outputElement = document.getElementById('divCustomerOutput');
+            //let departmentSelection = document.getElementById('ddProvince');
+            // clears the output every time
+            outputElement.innerHTML = "";
+            //Loop through array as usually for displaying
+            for (var i = 0; i < customers.length; i++) {
+
+                var tempCustomer = customers[i]; //Instead of typing StoreItems[i] every time the array we need, we can assign to a variable and use that to refer
+                var tempEL = document.createElement("p");
+                tempEL.innerText = tempCustomer.toString();
+                //Append to the Div
+                outputElement.appendChild(tempEL);
+            } //end for loop
+        } // end function here
+
+
+
+        const registercustomer = ev => {
+            ev.preventDefault(); // to stop the form from submitting by itself with built in function .preventDefault()
+            /*
+                    customers.push( // adding new users to the array
+                        new customer( //Through the new special keyword creating new instances for the object by getting the values through DOM   
+                            document.getElementById('tbFirstName').value,
+                            document.getElementById('tbLastName').value,
+                            document.getElementById('tbCity').value,
+                            document.getElementById('ddProvince').value,
+                            document.getElementById('tbBirthDate').value = new Date(),
+                            document.getElementById('ddGender').value,
+                        )
+                    );
+                      */
+
+            var iFname = document.getElementById("tbFirstName").value;
+            var iLname = document.getElementById("tbLastName").value;
+            var iCity = document.getElementById("tbCity").value;
+            var iProvince = document.getElementById("ddProvince").value;
+            var iDate = document.getElementById("tbBirthDate").value;
+            var iGender = document.getElementById("ddGender").value;
+
+            var newCustomer = new customer(iFname, iLname, iCity, iProvince, new Date(iDate), iGender);
+
+            customers.push(newCustomer);
+            // Calling our displayCustomers function will help us to display all the users
+            // So after the new user has been added, It will display it along with the previous 4 users in the object or array of users
+            displayCustomers();
+
+
+            document.forms[0].reset(); // to clear the form for the next entries
+            // First I was clearing it here immediately but as the LAB wants us do it onclick event I made another function externally
+        };
+
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnSubmit').addEventListener('click', registercustomer);
+        }); // This helps us to led the DOM content load first and EventListener for the click of the button addUser
+
+
+
+        function queryData() {
+
+            let ddQueryProvince = document.getElementById("ddQueryProvince").value;
+            let ddQueryGender = document.getElementById('ddQueryGender').value;
+            let tbQueryAge = document.getElementById('tbQueryAge').value;
+
+            let divQueryOutput = document.getElementById('divQueryOutput');
+
+            // clearing the output everytime dropdown is selected
+            divQueryOutput.innerHTML = "";
+
+            // var for expired amount to hold
+            var totalExpiredAmount = 0;
+
+
+            let objTotal = customers.filter(x => {
+                return x.gender === ddQueryGender || x.province === ddQueryProvince || x.birthDate === tbQueryAge
+            }).length;
+
+
+            let objOne = customers.filter(x => {
+                return x.gender === ddQueryGender
+            }).length;
+
+
+            let objTwo = customers.filter(x => {
+                return x.province === ddQueryProvince
+            }).length;
+
+
+            let objThree = customers.filter(x => {
+                x.birthDate === tbQueryAge
+            }).length;
+
+
+
+            //totalExpiredAmount += tempParcelItem.price;
+
+            //const prices = [6.75, 3.10, 4.00, 8.12]; // Total: 21.97
+
+            let total = 0;
+
+            // const totalNumber = customers.reduce((sum, price) => sum + price, 0);
+
+            //console.log(total);
+
+
+            divQueryOutput.innerHTML += ` Total people ${objTotal}
+			                Gender of Total Customers ${ddQueryGender}  ${objOne}    
+							Number of people living in Province ${ ddQueryProvince} ${objTwo}  
+							The Birthday Dates of people includes ${tbQueryAge} ${objThree}`;
+
+
+        } //func end
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnQuery').addEventListener('click', queryData);
+        }); // This helps us to led the DOM content load first and EventListener for the click of the button
+    </script>
+</body>
+
+</html>
